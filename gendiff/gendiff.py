@@ -7,7 +7,7 @@ def json_from_dict(file_path):
 
 
 def encode(file):
-    return json.dumps(dict(file), indent=2)
+    return json.dumps(dict(file), indent=1)
 
 
 def sort(sortable_list):
