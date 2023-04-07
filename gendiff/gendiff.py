@@ -27,7 +27,7 @@ def ready_list(file_1, file_2):
                 res.append((f'+ {key}', dict1.get(key)))
                 res.append((f'- {key}', dict2.get(key)))
         else:
-            res.append((f'{key}', dict1.get(key)))
+            res.append((f'- {key}', dict1.get(key)))
     for key in dict2.keys():
         if dict1.get(key) is None:
             res.append((f'+ {key}', dict1.get(key)))
