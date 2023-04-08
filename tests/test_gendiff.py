@@ -19,19 +19,35 @@ def json2():
 def test_json1_to_dict():
     result = gendiff.json_from_dict(JSON1)
     assert result == ({
-  "host": "hexlet.io",
-  "timeout": 50,
-  "proxy": "123.234.53.22",
-  "follow": False,
-  })
+        "host": "hexlet.io",
+        "timeout": 50,
+        "proxy": "123.234.53.22",
+        "follow": False,
+        })
 
     result = gendiff.json_from_dict(JSON2)
     assert result == ({
-  "timeout": 20,
-  "verbose": True,
-  "host": "hexlet.io"
-})
+        "timeout": 20,
+        "verbose": True,
+        "host": "hexlet.io"
+        })
     
+def test_encode(json2):
+    result = gendiff.encode(json2, 0)
+    result = result.replace('\n', '')
+    assert result == '{"timeout": 20,"verbose": true,"host": "hexlet.io"}'
+   
+
+def test_ready_list():
+    result = gendiff.ready_list(JSON1, JSON2)
+    assert result == {
+        'host': 'hexlet.io',
+        '+ timeout': 50,
+        '- timeout': 20,
+        '- proxy': '123.234.53.22',
+        '- follow': False,
+        '- verbose': True
+        }
 
     
 
