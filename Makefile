@@ -18,4 +18,7 @@ check: selfcheck test lint
 build: check
 	poetry build
 
+run:
+	poetry run gendiff tests/fixture/file1.yml tests/fixture/file2.yml 
+
 .PHONY: install test lint selfcheck check build
