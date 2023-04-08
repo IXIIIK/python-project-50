@@ -16,9 +16,6 @@ def encode(file, index):
     return json.dumps(file, indent=index)
 
 
-
-
-
 def ready_list(file_1, file_2):
     dict1 = json_yaml_from_dict(file_1)
     dict2 = json_yaml_from_dict(file_2)
@@ -41,7 +38,5 @@ def ready_list(file_1, file_2):
 
 
 def generate_diff(file_1, file_2):
-    return encode(ready_list(file_1, file_2),
-                INDEX).replace('"', '').replace(',', '')
-
-
+    return encode(ready_list(file_1, file_2), INDEX,
+                  ).replace('"', '').replace(',', '')
