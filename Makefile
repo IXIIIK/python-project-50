@@ -19,6 +19,6 @@ build: check
 	poetry build
 
 run:
-	poetry run gendiff tests/fixture/file1.yml tests/fixture/file2.yml 
+	poetry run gendiff tests/fixture/file1.json tests/fixture/file2.json 
 
 .PHONY: install test lint selfcheck check build

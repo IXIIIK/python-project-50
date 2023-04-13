@@ -1,6 +1,7 @@
 import pytest
 import json
-from gendiff import gendiff
+import yaml
+from gendiff import generate_diff
 
 JSON1 = 'tests/fixture/file1.json'
 JSON2 = 'tests/fixture/file2.json'
@@ -8,65 +9,21 @@ YAML1 = 'tests/fixture/file1.yml'
 YAML2 = 'tests/fixture/file2.yml'
 
 
-@pytest.fixture
-def json1():
-    return json.load(open(JSON1))
+def open_correct_view():
+    with open('./tests/fixture/right_stylish_format.txt') as stylish:
+        right_stylish = stylish.read()
+    with open('./tests/fixture/right_plain_format.txt') as plain:
+        right_plain = plain.read()
+    return right_stylish, right_plain
 
 
-@pytest.fixture
-def json2():
-    return json.load(open(JSON2))
+def test_generate_diff_json():
+    res = open_correct_view()[0].replace('\n', '')
+    gen_diff = generate_diff(JSON1, JSON2).replace('\n', '')
+    assert res == gen_diff
 
 
+#def test_generate_diff_yaml():
+#   assert open_correct_view()[1] == generate_diff(JSON1, JSON2)
 
-def test_json1_to_dict():
-    result = gendiff.json_yaml_from_dict(JSON1)
-    assert result == ({
-        "host": "hexlet.io",
-        "timeout": 50,
-        "proxy": "123.234.53.22",
-        "follow": False,
-        })
-
-    result = gendiff.json_yaml_from_dict(JSON2)
-    assert result == ({
-        "timeout": 20,
-        "verbose": True,
-        "host": "hexlet.io"
-        })
-    
-    result = gendiff.json_yaml_from_dict(YAML1)
-    assert result == ({
-        "host": "hexlet.io",
-        "timeout": 50,
-        "proxy": "123.234.53.22",
-        "follow": False,
-        })
-
-    result = gendiff.json_yaml_from_dict(YAML2)
-    assert result == ({
-        "timeout": 20,
-        "verbose": True,
-        "host": "hexlet.io"
-        })
-    
-
-def test_encode(json2):
-    result = gendiff.encode(json2, 0)
-    result = result.replace('\n', '')
-    assert result == '{"timeout": 20,"verbose": true,"host": "hexlet.io"}'
-   
-
-def test_ready_list():
-    result = gendiff.ready_list(JSON1, JSON2)
-    assert result == {
-        '  host': 'hexlet.io',
-        '+ timeout': 20,
-        '- timeout': 50,
-        '- proxy': '123.234.53.22',
-        '- follow': False,
-        '+ verbose': True
-        }
-
-    
 

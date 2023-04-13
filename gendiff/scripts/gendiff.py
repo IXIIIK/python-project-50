@@ -1,9 +1,14 @@
+#!/usr/bin/env python3
+
 from gendiff.gendiff import generate_diff
-from gendiff.parser import ARGS
+from gendiff.parser import parseargs
+import sys
 
 
 def main():
-    print(generate_diff(ARGS.first_file, ARGS.second_file))
+    options = parseargs(sys.argv[1:])
+    args = vars(options).values()
+    print(generate_diff(*args))
 
 
 if __name__ == '__main__':
