@@ -10,6 +10,7 @@ GET_FORMAT = {
     'json': get_json
 }
 
+
 def get_data_type(file_path1, file_path2):
 
     file1_ext = file_path1[-4:].upper()
@@ -40,15 +41,15 @@ def get_diff_for_key(dict1, dict2, key):
     return result
 
 
-
-def ready_list(file_1, file_2, level=1): 
+def ready_list(file_1, file_2, level=1):
     result = []
     keys1 = list(file_1.keys())
     keys2 = list(file_2.keys())
     all_keys = sorted(set(keys1 + keys2))
     for key in all_keys:
-        result.append(get_diff_for_key(file_1, file_2, key)) 
+        result.append(get_diff_for_key(file_1, file_2, key))
     return result
+
 
 def generate_diff(file_1, file_2, format='stylish'):
     data_type = get_data_type(file_1, file_2)
