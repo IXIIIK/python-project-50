@@ -1,29 +1,29 @@
 import pytest
-import json
-import yaml
 from gendiff import generate_diff
+from tests.fixture import correct
 
-JSON1 = 'tests/fixture/file1.json'
-JSON2 = 'tests/fixture/file2.json'
-YAML1 = 'tests/fixture/file1.yml'
-YAML2 = 'tests/fixture/file2.yml'
+correct_json = correct.diff_json
+correct_yml = correct.diff_yml
+correct_stylish_yml = correct.diff_stylish_yml
+correct_plain = correct.diff_plain
+correct_plain_yaml = correct.diff_plain_yml
+correctjson_json = correct.diffjson_json
+correctyml_json = correct.diffyml_json
 
-
-def open_correct_view():
-    with open('./tests/fixture/right_stylish_format.txt') as stylish:
-        right_stylish = stylish.read()
-    with open('./tests/fixture/right_plain_format.txt') as plain:
-        right_plain = plain.read()
-    return right_stylish, right_plain
-
-
-def test_generate_diff_json():
-    res = open_correct_view()[0].replace('\n', '')
-    gen_diff = generate_diff(JSON1, JSON2).replace('\n', '')
-    assert res == gen_diff
+json1 = r'tests/fixture/file1.json'
+json2 = r'tests/fixture/file2.json'
+yml1 = r'tests/fixture/file1.yml'
+yml2 = r'tests/fixture/file2.yml'
 
 
-#def test_generate_diff_yaml():
-#   assert open_correct_view()[1] == generate_diff(JSON1, JSON2)
+
+@pytest.mark.parametrize("test_input1,test_input2,formatter,expected",
+                         [
+                             pytest.param(json1, json2, 'stylish', correct_json),
+                             pytest.param(yml1, yml2, 'stylish', correct_yml),                                                   
+                         ]
+                         )
+def test_generate_diff(test_input1, test_input2, formatter, expected):
+    assert generate_diff(test_input1, test_input2, formatter) == expected
 
 
