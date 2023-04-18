@@ -1,4 +1,5 @@
-from gendiff.parse_json_yaml import parse
+from gendiff.parse import parse
+from gendiff.parse import get_data_type
 from gendiff.formaters.plain import flatten
 from gendiff.formaters.stylish import stylish
 from gendiff.formaters.json import get_json
@@ -9,20 +10,6 @@ GET_FORMAT = {
     'plain': flatten,
     'json': get_json
 }
-
-
-def get_data_type(file_path1, file_path2):
-
-    file1_ext = file_path1[-4:].upper()
-    file2_ext = file_path2[-4:].upper()
-    yaml_ext = ('.YML', 'YAML')
-    if file1_ext == 'JSON' and file2_ext == 'JSON':
-        data_type = 'JSON'
-    elif file1_ext in yaml_ext and file2_ext in yaml_ext:
-        data_type = 'YAML'
-    else:
-        raise Exception('Unsupported file format!')
-    return data_type
 
 
 def get_diff_for_key(dict1, dict2, key):
