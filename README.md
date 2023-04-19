@@ -6,3 +6,11 @@ src="https://api.codeclimate.com/v1/badges/33191392fcf97c434b8a/test_coverage" /
 
 <a href="https://codeclimate.com/github/IXIIIK/python-project-50/maintainability"><img 
 src="https://api.codeclimate.com/v1/badges/33191392fcf97c434b8a/maintainability" /></a>
+
+<h2>Difference calculator</h2>
+<br>
+<p>
+A difference calculator is a program that
+ determines the difference between two data 
+structures.
+</p>
