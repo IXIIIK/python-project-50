@@ -14,4 +14,4 @@ A difference calculator is a program that
 structures.
 </p>
 
-<script async id="asciicast-kDLZYlspbWY87mo8TAVpmA2ih" src="https://asciinema.org/a/kDLZYlspbWY87mo8TAVpmA2ih.js"></script>
+[![asciicast](https://asciinema.org/a/kDLZYlspbWY87mo8TAVpmA2ih.svg)](https://asciinema.org/a/kDLZYlspbWY87mo8TAVpmA2ih)
