@@ -1,28 +1,21 @@
 import json
+import os.path
 import yaml
-from pathlib import Path
 
 
-def parse(file_path, data_type):
-
-    with Path(file_path).open() as file:
-        if data_type == 'JSON':
-            return json.load(file)
-        elif data_type == 'YAML':
-            return yaml.safe_load(file)
-        else:
-            raise Exception('Unsupported file format!')
+def parse(file, format_name):
+    if format_name == "JSON":
+        return json.load(file)
+    elif format_name == "YAML":
+        return yaml.safe_load(file)
 
 
-def get_data_type(file_path1, file_path2):
-
-    file1_ext = file_path1[-4:].upper()
-    file2_ext = file_path2[-4:].upper()
-    yaml_ext = ('.YML', 'YAML')
-    if file1_ext == 'JSON' and file2_ext == 'JSON':
-        data_type = 'JSON'
-    elif file1_ext in yaml_ext and file2_ext in yaml_ext:
-        data_type = 'YAML'
+def get_data_type(file_path):
+    extension = os.path.splitext(file_path)[1]
+    file = open(file_path)
+    if extension == ".json":
+        return parse(file, "JSON")
+    elif extension == ".yaml" or extension == ".yml":
+        return parse(file, "YAML")
     else:
-        raise Exception('Unsupported file format!')
-    return data_type
+        return "Неизвестный формат предоставленных данных"

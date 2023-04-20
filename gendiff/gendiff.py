@@ -5,42 +5,54 @@ from gendiff.formaters.stylish import stylish
 from gendiff.formaters.json import get_json
 
 
-GET_FORMAT = {
-    'stylish': stylish,
-    'plain': flatten,
-    'json': get_json
-}
-
-
-def get_diff_for_key(dict1, dict2, key):
-    old_data = dict1.get(key, None)
-    new_data = dict2.get(key, None)
-    if old_data == new_data:
-        result = ('unchanged', key, old_data, new_data)
-    elif key not in dict1:
-        result = ('added', key, old_data, new_data)
-    elif key not in dict2:
-        result = ('removed', key, old_data, new_data)
-    elif isinstance(old_data, dict) and isinstance(new_data, dict):
-        result = ('nested', key, ready_list(old_data, new_data), None)
+def formatting(result_dict, format_name):
+    if format_name == "stylish":
+        return stylish(result_dict)
+    elif format_name == "plain":
+        return flatten(result_dict)
+    elif format_name == "json":
+        return get_json(result_dict)
     else:
-        result = ('changed', key, old_data, new_data)
-    return result
+        return "Неизвестный формат для вывода результата сравнения"
 
 
-def ready_list(file_1, file_2, level=1):
+def make_tree(data1, data2):
+    return {"type": "root", "children": make_children(data1, data2)}
+
+
+def make_children(data1, data2):  # noqa: C901
     result = []
-    keys1 = list(file_1.keys())
-    keys2 = list(file_2.keys())
-    all_keys = sorted(set(keys1 + keys2))
-    for key in all_keys:
-        result.append(get_diff_for_key(file_1, file_2, key))
+    keys = data1.keys() | data2.keys()
+    for key in sorted(keys):
+        if key not in data2:
+            result.append({"key": key, "type": "deleted", "value": data1[key]})
+        elif key not in data1:
+            result.append({"key": key, "type": "added", "value": data2[key]})
+        elif isinstance(data1[key], dict) and isinstance(data2[key], dict):
+            result.append(
+                {
+                    "key": key,
+                    "type": "parent",
+                    "children": make_children(data1[key], data2[key]),
+                }
+            )
+        elif data1[key] == data2[key]:
+            result.append(
+                {"key": key, "type": "unchanged", "value": data1[key]}
+            )
+        else:
+            result.append(
+                {
+                    "key": key,
+                    "type": "updated",
+                    "value1": data1[key],
+                    "value2": data2[key],
+                }
+            )
     return result
 
 
 def generate_diff(file_1, file_2, format='stylish'):
-    data_type = get_data_type(file_1, file_2)
-    parsed_data1 = parse(file_1, data_type)
-    parsed_data2 = parse(file_2, data_type)
-    diff_list = ready_list(parsed_data1, parsed_data2)
-    return GET_FORMAT[format](diff_list)
+    file1 = get_data_type(file_1)
+    file2 = get_data_type(file_2)
+    return formatting(make_tree(file1, file2), format)

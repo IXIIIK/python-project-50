@@ -1,83 +1,52 @@
-from json import dumps
+def stylish(diff):
+    return tree_to_stylish(diff, 1)
 
 
-VERTEX_TYPE_TO_INDENT = {
-    'added': '  + ',
-    'removed': '  - ',
-    'unchanged': '    ',
-    'nested': '    ',
-    'changed': ' -+ ',
-}
-BLANK_STR = '    '
-TYPE = 0
-KEY = 1
-OLD_VALUE = 2
-NEW_VALUE = 3
+def tree_to_stylish(tree, depth):  # noqa: C901
+    children = tree.get("children")
+    key = tree.get("key")
+    value = value_to_str(tree.get("value"), depth)
+    value1 = value_to_str(tree.get("value1"), depth)
+    value2 = value_to_str(tree.get("value2"), depth)
+    indent = build_indent(depth - 1)
+    indent_big = build_indent(depth)
+    type_of_property = tree["type"]
+    if type_of_property == "root":
+        lines = map(lambda child: tree_to_stylish(child, depth), children)
+        result = "".join(lines)
+        return f"{{\n{result}}}"
+    elif type_of_property == "parent":
+        lines = map(lambda child: tree_to_stylish(child, depth + 1), children)
+        result = "".join(lines)
+        return f"{indent_big}{key}: {{\n{result}{indent_big}}}\n"
+    elif type_of_property == "added":
+        return f"{indent}  + {key}: {value}\n"
+    elif type_of_property == "deleted":
+        return f"{indent}  - {key}: {value}\n"
+    elif type_of_property == "unchanged":
+        return f"{indent}    {key}: {value}\n"
+    elif type_of_property == "updated":
+        return f"{indent}  - {key}: {value1}\n{indent}  + {key}: {value2}\n"
+    else:
+        return "Неизвестный тип свойства"
 
 
-def stylish(diff, depth=0):
-    format_vertex_vars = {
-        'unchanged': format_unchanged,
-        'added': format_added,
-        'removed': format_removed,
-        'nested': format_nested,
-        'changed': format_changed}
-    result = []
-    for vertex in diff:
-        format_vertex = format_vertex_vars[vertex[TYPE]]
-        formatted_vertex = format_vertex(vertex, depth)
-        result.append(formatted_vertex)
-    result = ['{'] + result + [f'{BLANK_STR * depth}}}']
-    return '\n'.join(result)
+def value_to_str(value, depth):
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    elif value is None:
+        return "null"
+    elif isinstance(value, dict):
+        indent = build_indent(depth)
+        indent_big = build_indent(depth + 1)
+        for key in value:
+            print('value=', value)
+            print('key=', key)
+            print('value[key]=', value[key])
+            return f"{{\n{indent_big}{key}: {value_to_str(value[key], depth + 1)}\n{indent}}}" # noqa
+    else:
+        return str(value)
 
 
-def format_unchanged(vertex, depth):
-    value = vertex[OLD_VALUE]
-    return (f'{BLANK_STR * depth}'
-            f'{VERTEX_TYPE_TO_INDENT[vertex[TYPE]]}'
-            f'{vertex[KEY]}: '
-            f'{(value if isinstance(value, str) else dumps(value))}')
-
-
-def format_added(vertex, depth):
-    return (f'{BLANK_STR * depth}'
-            f'{VERTEX_TYPE_TO_INDENT["added"]}'
-            f'{vertex[KEY]}: '
-            f'{stringify_value(vertex[NEW_VALUE], depth)}')
-
-
-def format_removed(vertex, depth):
-    return (f'{BLANK_STR * depth}'
-            f'{VERTEX_TYPE_TO_INDENT["removed"]}'
-            f'{vertex[KEY]}: '
-            f'{stringify_value(vertex[OLD_VALUE], depth)}')
-
-
-def format_changed(vertex, depth):
-    return '\n'.join(
-        [
-            format_removed(vertex, depth),
-            format_added(vertex, depth)
-        ]
-    )
-
-
-def format_nested(vertex, depth):
-    return (f'{BLANK_STR * depth}'
-            f'{VERTEX_TYPE_TO_INDENT[vertex[TYPE]]}'
-            f'{vertex[KEY]}: '
-            f'{stylish(vertex[OLD_VALUE], depth + 1)}')
-
-
-def stringify_value(value, depth):
-    if isinstance(value, dict):
-        depth += 1
-        result = []
-        for key, sub_value in value.items():
-            value_to_str = (f'{BLANK_STR * (depth + 1)}'
-                            f'{key}: '
-                            f'{stringify_value(sub_value, depth)}')
-            result.append(value_to_str)
-        result = ['{'] + result + [f'{BLANK_STR * depth}}}']
-        return '\n'.join(result)
-    return value if isinstance(value, str) else dumps(value)
+def build_indent(indent):
+    return " " * 4 * indent
