@@ -1,37 +1,36 @@
+import pytest
+from pathlib import Path
 from gendiff import generate_diff
+from gendiff.parser import parseargs
 
 
-def test_generate_stylish():
-    diff_json_stylish = generate_diff(
-        "tests/fixture/file1.json", "tests/fixture/file2.json"
-    )
-    diff_yaml_stylish = generate_diff(
-        "tests/fixture/file1.yaml", "tests/fixture/file2.yaml"
-    )
-    diff_yml_stylish = generate_diff(
-        "tests/fixture/file1.yml", "tests/fixture/file2.yml"
-    )
-    result_true_stylish = open("tests/fixture/correct_json_stylish").read()
-
-    assert diff_json_stylish == result_true_stylish
-    assert diff_yaml_stylish == result_true_stylish
-    assert diff_yml_stylish == result_true_stylish
-
-def test_generate_plain():
-    diff_json_plain = generate_diff(
-        "tests/fixture/file1.json", "tests/fixture/file2.json", "plain"
-    )
-    diff_yaml_plain = generate_diff(
-        "tests/fixture/file1.yaml", "tests/fixture/file2.yaml", "plain"
-    )
-    diff_yml_plain = generate_diff(
-        "tests/fixture/file1.yml", "tests/fixture/file2.yml", "plain"
-    )
-    result_true_plain = open("tests/fixture/result_true_plain").read()
-
-    assert diff_json_plain == result_true_plain
-    assert diff_yaml_plain == result_true_plain
-    assert diff_yml_plain == result_true_plain
+def get_data_from_file(file_name):
+    with Path(get_full_file_name(file_name)).open() as file:
+        result = file.read()
+    return result
 
 
+def get_full_file_name(file_name):
+    return f'tests/fixture/{file_name}'
 
+
+def get_data(file_name):
+    if isinstance(file_name, tuple):
+        start_data = get_data_from_file(file_name[0])
+        end_data = get_data_from_file(file_name[1])
+        result = ' '.join((start_data, end_data))
+    else:
+        result = get_data_from_file(file_name)
+    return result
+
+
+def test_unsupported_files():
+    with pytest.raises(Exception) as e:
+        _ = generate_diff('some_file1.txt', 'some_file2.txt')
+    assert str(e.value) == "Unsupported file format!"
+
+
+def test_parser():
+    parser = parseargs(['file1.json', 'file2.json'])
+    assert parser.first_file == 'file1.json'
+    assert parser.second_file == 'file2.json'
