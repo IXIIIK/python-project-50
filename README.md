@@ -1,3 +1,5 @@
+<h1>Tests</h1>
+
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/IXIIIK/python-project-50/workflows/hexlet-check/badge.svg)](https://github.com/IXIIIK/python-project-50/actions)
 
@@ -13,6 +15,19 @@ A difference calculator is a program that
  determines the difference between two data 
 structures.
 </p>
+
+<h1>Installation:</h1>
+<ul>
+ <li>clone a repository: <b>git clone https://github.com/IXIIIK/python-project-lvl1</b></li>
+ <li>open rep in terminal: <b>cd python-project-lvl1/</b></li>
+ <li>install:
+  <ol type='A'>
+   <li><b>make install</b></li>
+   <li><b>make build</b></li>
+   <li><b>make package-install</b></li>
+  </ol>
+ </li>
+</ul>
 
 <h2>Asciinema:</h2>
 
